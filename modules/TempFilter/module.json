@@ -4,7 +4,7 @@
     "image": {
         "repository": "iotedgedemocontainer.azurecr.io/tempfilter",
         "tag": {
-            "version": "0.0.3",
+            "version": "1.1.1",
             "platforms": {
                 "amd64": "./Dockerfile.amd64", 
                 "amd64.debug": "./Dockerfile.amd64.debug",

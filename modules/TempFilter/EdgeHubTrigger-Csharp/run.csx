@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 // Filter messages based on the temperature value in the body of the message and the temperature threshold value.
 public static async Task Run(Message messageReceived, IAsyncCollector<Message> output, TraceWriter log)
 {
-     const int temperatureThreshold = 21;
+     //const int temperatureThreshold = 21;
      byte[] messageBytes = messageReceived.GetBytes();
      var messageString = System.Text.Encoding.UTF8.GetString(messageBytes);
 
@@ -17,19 +17,25 @@ public static async Task Run(Message messageReceived, IAsyncCollector<Message> o
          // Get the body of the message and deserialize it.
          var messageBody = JsonConvert.DeserializeObject<MessageBody>(messageString);
 
-         if (messageBody != null && messageBody.ambient.temperature > temperatureThreshold)
+         if (messageBody != null) // > temperatureThreshold
          {
              // Send the message to the output as the temperature value is greater than the threashold.
              var filteredMessage = new Message(messageBytes);
+
+             //filteredMessage.Properties.Add("temperature", Math.Round(messageBody.ambient.temperature, 2));
+             //filteredMessage.Properties.Add("humidity", Math.Round(messageBody.ambient.humidity, 2));
+
              // Copy the properties of the original message into the new Message object.
              foreach (KeyValuePair<string, string> prop in messageReceived.Properties)
              {
-                 filteredMessage.Properties.Add(prop.Key, prop.Value);                }
+                filteredMessage.Properties.Add(prop.Key, prop.Value);
+             }
              // Add a new property to the message to indicate it is an alert.
-             filteredMessage.Properties.Add("MessageType", "Alert");
-             // Send the message.       
+             //filteredMessage.Properties.Add("MessageType", "Alert");
+             // Send the message.
              await output.AddAsync(filteredMessage);
-             log.Info("Received and transferred a message with temperature above the threshold");
+             log.Info("[Azure Functions] Processed and sent a message with temperature.");
+             //log.Info("Received and transferred a message with temperature above the threshold");
          }
      }
  }
